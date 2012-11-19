@@ -3,7 +3,7 @@
 "-------------------------------------------------------------------
 " Author: Alexandre Viau
 "
-" Version: 1.0
+" Version: 1.1
 "
 " Description: Uses the lynx text browser to browse websites and local files
 " and return the rendered web pages inside vim. The links in the web pages may
@@ -22,6 +22,14 @@
 " <url:http://www.cheat-sheets.org/saved-copy/msnet-formatting-strings.pdf>
 " <url:http://www.cars.com>
 " <url:http://www.smartisans.com/articles/vb_templates.aspx>
+"
+" History
+"
+" Version 1.1
+"
+" 1. Changed the file format to unix
+"
+"-------------------------------------------------------------------
 
 com! -nargs=+ WebBrowser call OpenWebBrowser(<q-args>, 1)
 
