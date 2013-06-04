@@ -1,7 +1,7 @@
 " Documentation {{{1
 "
 " Name: webBrowser.vim
-" Version: 1.5
+" Version: 1.6
 " Description: Uses the lynx text browser to browse websites and local files and return the rendered web pages inside vim. The links in the web pages may be "clicked" to follow them, so it turns vim into a simple web text based web browser. This plugin is based on the "browser.vim" plugin.
 " Author: Alexandre Viau (alexandreviau@gmail.com)
 " Website: The latest version is found on "vim.org"
@@ -11,23 +11,32 @@
 " In the lynx.cfg file, set the following parameters: 
 " ACCEPT_ALL_COOKIES:TRUE
 " MAKE_LINKS_FOR_ALL_IMAGES:TRUE
-
+" Change the following paths to your lynx files:
+" let s:lynxPath = 'c:\lynx'
+" let s:lynxExe = s:lynxPath . 'lynx.exe'
+" let s:lynxCfg = '-cfg=' . s:lynxPath . 'lynx.cfg'
+" let s:lynxLss = '-lss=' . s:lynxPath . 'lynx.lss'
+" let s:lynxCmd = s:lynxExe . ' ' . s:lynxCfg . ' ' . s:lynxLss
+" let s:lynxDumpPath = 'c:\lynx\dump'
+" let s:lynxToolsPath = 'c:\lynx\tools'
+"
+" Usage: {{{2
+" <leader>wb :WebBrowser (Open a new web browser tab with the address specified)
+" <leader>wc :exe 'WebBrowser "' . @* . '"'<cr> (Open a new web browser tab with the address in the clipboard)
+" <leader>wg :exe 'WebBrowser www.google.com/search?q="' . input("Google ") . '"'<cr> (Do a google search using the specified search keywords and open the results in a new tab)
+" <leader>wp :exe 'WebBrowser www.wikipedia.com/wiki/"' . input("Wikipedia ") . '"'<cr> (Do a wikipedia search using the specified search keywords and open the results in a new tab)
+" <leader>wd :WebDump (Downloads the specified webpage without opening it in vim)
+" <space>l (Open link)
+" <space>h (Previous page ("back button"))
+" <space>j (Highlight links and go to next link)
+" <space>k (Highlight links and go to previous link)
+"
 " Todo: {{{2
-" - To abandon this plugin (learn better vimperator or pentadactyl), or to redo it especially the code that gets the link number and search for it at the end of the file (no need to move cursor) and to do it in a mapping, it may be done in a function
+" - Redo the code that gets the link number and search for it at the end of the file (no need to move cursor) and to do it in a mapping, it may be done in a function
 " - I added basicXmlParser in the plugin, add a webBrowser.xml file and in it, have 2 keys: history and favorites, which will be string of utl links
 " - Add links bar like vimExplorer (favorites & history) with links not from utl but with brackets [http://yahoo.com] thus no need for utl
 " - Use image_links and accept_all_cookies options in the command run from the plugin instead of having to modify the .cfg file
 "
-" Tests: {{{2 
-" Links to use for testing the plugin with the utl plugin
-" <url:http://www.cars.com/crp/vp/images/13ford_fusion/Titanium_Action_7.jpg>
-" <url:http://www.bobpiper.co.uk/My%20favourite%20Tree.jpg> 
-" <url:http://www.codeproject.com/Articles/36091/Top-10-steps-to-optimize-data-access-in-SQL-Server> 
-" <url:http://www.cheat-sheets.org/>
-" <url:http://www.cheat-sheets.org/saved-copy/msnet-formatting-strings.pdf>
-" <url:http://www.cars.com>
-" <url:http://www.smartisans.com/articles/vb_templates.aspx>
-" 
 " History {{{2
 " 1.1 {{{3
 " - Changed the file format to unix
@@ -41,6 +50,8 @@
 " - Changed mappings \wb etc to <leader>wb because it was causing my "w" key in normal mode to wait for another key
 " 1.5 {{{3
 " - Added the webdump command and function to download in batch
+" 1.6 {{{3
+" - Added documentation and usage
 
 " Commands: To start the plugin {{{1
 com! -nargs=+ WebBrowser call OpenWebBrowser(<q-args>, 1)
@@ -145,13 +156,13 @@ function! OpenWebBrowser(address, openInNewTab) " {{{2
         if a:openInNewTab == 1
             exe "tabnew"
             exe "set buftype=nofile"
-            " Open link
+            " <space>l (Open link)
             exe 'nnoremap <buffer> <space>l F[h/^ *<c-r><c-w>. \(http\\|file\)<cr>f l"py$:call OpenWebBrowser("<c-r>p", 0)<cr>'
-            " Previous page ("back button")
+            " <space>h (Previous page ("back button"))
             exe 'nnoremap <buffer> <space>h :normal u<cr>'
-            " Highlight links and go to next link
+            " <space>j (Highlight links and go to next link)
             exe "nnoremap <buffer> <space>j /\\d*\\]\\w*<cr>"
-            " Highlight links and go to previous link
+            " <space>k (Highlight links and go to previous link)
             exe "nnoremap <buffer> <space>k ?\\d*\\]\\w*<cr>"
         else
             " Clear the buffer
